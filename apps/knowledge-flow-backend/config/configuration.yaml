@@ -304,48 +304,25 @@ document_sources:
     description: "Personal local documents available for pull-mode ingestion"
 
 embedding_model:
-  provider: openai
-  name: mistral-embed
+  provider: ollama
+  name: granite-embedding:278m
   settings:
-    base_url: https://api.mistral.ai/v1
-    check_embedding_ctx_length: false
-    max_retries: 0
-    timeout:
-      connect: 10.0
-      read: 120.0
-    http_client_limits:
-      max_connections: 500
-      max_keepalive_connections: 0
-      keepalive_expiry_seconds: 10
+    base_url: http://10.0.2.2:11434
 
 # Configuration for the LLM used for summary, keyword generation
 # and other text generation tasks.
 chat_model:
-  provider: openai # openai | azure | azure-apim | ollama | vertex-ai | vertex-ai-model-garden
-  name: "gpt-4o-mini"
+  provider: ollama # openai | azure | azure-apim | ollama | vertex-ai | vertex-ai-model-garden
+  name: "mistral:latest"
   settings:
+    base_url: http://10.0.2.2:11434
     temperature: 0
-    max_retries: 0
-    timeout:
-      connect: 10.0
-      read: 120.0
-    http_client_limits:
-      max_connections: 500
-      max_keepalive_connections: 0
-      keepalive_expiry_seconds: 10
-
+    
 vision_model:
-  provider: openai
-  name: gpt-4o-mini # or gpt-4o if you want higher fidelity
+  provider: ollama
+  name: qwen3-vl:8b # or gpt-4o if you want higher fidelity
   settings:
-    max_retries: 0
-    timeout:
-      connect: 10.0
-      read: 120.0
-    http_client_limits:
-      max_connections: 500
-      max_keepalive_connections: 0
-      keepalive_expiry_seconds: 10
+    base_url: http://10.0.2.2:11434
     temperature: 0 # optional
 
 crossencoder_model:
