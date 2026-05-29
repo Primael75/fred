@@ -59,3 +59,7 @@ platform:
       base_url: http://127.0.0.1:8000/fred/agents/v2
       enabled: true
       ingress_prefix: /fred/agents/v2
+    - runtime_id: synthia-agents
+      base_url: http://127.0.0.1:8020/synthia/agents/v1
+      enabled: true
+      ingress_prefix: /synthia/agents/v1
