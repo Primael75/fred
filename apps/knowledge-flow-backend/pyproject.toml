@@ -77,8 +77,11 @@ dependencies = [
   # Audio/video ingestion
   "av>=14.0.0",
   "faster-whisper>=1.1.0",
+<<<<<<< HEAD
   "paddleocr>=3.6.0",
   "paddlepaddle>=3.3.1"
+=======
+>>>>>>> e39ee7517 (feat: add audio/video support in knowledge-flow-backend)
 ]
 
 [project.optional-dependencies]
