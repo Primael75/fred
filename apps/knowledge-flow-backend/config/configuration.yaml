@@ -79,6 +79,7 @@ processing:
         - suffix: ".ico"
           class_path: knowledge_flow_backend.core.processors.input.image_processor.image_processor.ImageProcessor
         - suffix: ".mp3"
+<<<<<<< HEAD
           class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
         - suffix: ".wav"
           class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
@@ -100,6 +101,29 @@ processing:
           class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
         - suffix: ".webm"
           class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+=======
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".wav"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".ogg"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".flac"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".m4a"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".aac"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".mp4"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".mkv"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".avi"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".mov"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".webm"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+>>>>>>> e39ee7517 (feat: add audio/video support in knowledge-flow-backend)
     medium:
       use_gpu: true
       generate_summary: false
@@ -155,6 +179,7 @@ processing:
         - suffix: ".ico"
           class_path: knowledge_flow_backend.core.processors.input.image_processor.image_processor.ImageProcessor
         - suffix: ".mp3"
+<<<<<<< HEAD
           class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
         - suffix: ".wav"
           class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
@@ -176,6 +201,29 @@ processing:
           class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
         - suffix: ".webm"
           class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+=======
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".wav"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".ogg"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".flac"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".m4a"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".aac"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".mp4"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".mkv"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".avi"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".mov"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".webm"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+>>>>>>> e39ee7517 (feat: add audio/video support in knowledge-flow-backend)
     rich:
       use_gpu: true
       generate_summary: false
@@ -231,6 +279,7 @@ processing:
         - suffix: ".ico"
           class_path: knowledge_flow_backend.core.processors.input.image_processor.image_processor.ImageProcessor
         - suffix: ".mp3"
+<<<<<<< HEAD
           class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
         - suffix: ".wav"
           class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
@@ -252,6 +301,29 @@ processing:
           class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
         - suffix: ".webm"
           class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+=======
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".wav"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".ogg"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".flac"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".m4a"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".aac"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".mp4"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".mkv"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".avi"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".mov"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+        - suffix: ".webm"
+          class_path: knowledge_flow_backend.core.processors.input.synthia.audio_video_processor.audio_video_processor.AudioVideoProcessor
+>>>>>>> e39ee7517 (feat: add audio/video support in knowledge-flow-backend)
 # attachment_processors:
 #   - suffix: ".pdf"
 #     class_path: knowledge_flow_backend.core.processors.input.fast_text_processor.fast_lite_pdf_processor.FastLitePdfProcessor
@@ -324,6 +396,21 @@ vision_model:
   settings:
     base_url: http://10.0.2.2:11434
     temperature: 0 # optional
+<<<<<<< HEAD
+=======
+
+audio_model:
+  whisper_model_size: base
+  device: cpu
+  language: null
+# ocr_model:
+#   provider: openai
+#   name: mistral-ocr-latest
+#   settings:
+#     base_url: https://api.mistral.ai/v1
+#     request_timeout: 300
+#     signed_url_expiry_hours: 1
+>>>>>>> e39ee7517 (feat: add audio/video support in knowledge-flow-backend)
 
 crossencoder_model:
   name: cross-encoder/ms-marco-MiniLM-L-12-v2
