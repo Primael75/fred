@@ -12,18 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import type { ComponentType } from "react";
-import type { ComponentPart } from "../../../../../slices/runtime/runtimeOpenApi";
-import { PrestonEditorBlock } from "./PrestonEditorBlock";
+interface PrestonEditorBlockProps {
+  presentation_id: string;
+  base_url?: string;
+}
 
-const COMPONENT_REGISTRY: Record<string, ComponentType<Record<string, any>>> = {
-  "presenton-editor": PrestonEditorBlock,
-};
-
-export function ComponentBlock({ part }: { part: ComponentPart }) {
-  const Component = COMPONENT_REGISTRY[part.component_id];
-  if (!Component) {
-    return <p>Unknown component: {part.component_id}</p>;
-  }
-  return <Component {...(part.props ?? {})} />;
+export function PrestonEditorBlock({ presentation_id, base_url = "http://localhost:5050" }: PrestonEditorBlockProps) {
+  return (
+    <iframe
+      src={`${base_url}/presentation?id=${presentation_id}`}
+      style={{ width: "100%", height: "600px", border: "none" }}
+      title={`Presenton editor — ${presentation_id}`}
+    />
+  );
 }
