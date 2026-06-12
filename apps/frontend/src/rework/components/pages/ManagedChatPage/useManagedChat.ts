@@ -26,7 +26,7 @@ import {
   usePostTeamSessionControlPlaneV1TeamsTeamIdSessionsPostMutation,
 } from "../../../../slices/controlPlane/controlPlaneOpenApi";
 import { isTraceChannel, textOf } from "../../../../rework/utils/traceUtils";
-import type { ThreadMessage } from "@rework/types/thread";
+import type { ThreadMessage, UiPart } from "@rework/types/thread";
 import type { TokenUsage } from "@rework/types/conversation";
 import { useSessionHistory } from "./useSessionHistory";
 import { buildComposerRuntimeContext } from "./runtimeContextBuilder";
@@ -120,6 +120,11 @@ function toThreadMessages(messages: ChatMessage[], isStreaming: boolean): Thread
         }
         if (tokenUsage && sources.length > 0) break;
       }
+
+      const uiParts = finalMessages
+        .flatMap((m) => (m.parts as unknown as Array<{ type?: string }>) ?? [])
+        .filter((p) => p.type === "geo" || p.type === "link" || p.type === "component") as unknown as UiPart[];
+
       result.push({
         id: `${eid}:assistant`,
         role: "assistant",
@@ -128,6 +133,7 @@ function toThreadMessages(messages: ChatMessage[], isStreaming: boolean): Thread
         traceMessages,
         sources,
         tokenUsage,
+        uiParts: uiParts.length > 0 ? uiParts : undefined,
       });
     }
   }

@@ -17,7 +17,10 @@
 // layer (AssistantTurn, HitlPrompt) consumes them directly.
 
 import type { ChatMessage, VectorSearchHit } from "../../slices/agentic/agenticOpenApi";
+import type { ComponentPart, GeoPart, LinkPart } from "../../slices/runtime/runtimeOpenApi";
 import type { TokenUsage } from "./conversation";
+
+export type UiPart = LinkPart | GeoPart | ComponentPart;
 
 export interface ThreadMessage {
   id: string;
@@ -29,4 +32,5 @@ export interface ThreadMessage {
   tokenUsage?: TokenUsage | null;
   hitlChoices?: Array<{ id: string; label: string }>;
   hitlTitle?: string | null;
+  uiParts?: UiPart[];
 }

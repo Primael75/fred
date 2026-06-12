@@ -14,6 +14,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ChatMessage, VectorSearchHit } from "../../../../../slices/agentic/agenticOpenApi";
+import type { UiPart } from "@rework/types/thread";
+import { UiPartRenderer } from "@shared/molecules/UiPartRenderer/UiPartRenderer";
 import { ThoughtTrace } from "@shared/molecules/ThoughtTrace/ThoughtTrace";
 import { AssistantMessage } from "@shared/molecules/AssistantMessage/AssistantMessage";
 import { HorizontalScrollRow } from "@shared/molecules/HorizontalScrollRow/HorizontalScrollRow";
@@ -32,9 +34,10 @@ interface AssistantTurnProps {
   sources: VectorSearchHit[];
   tokenUsage?: TokenUsage | null;
   isStreaming: boolean;
+  uiParts?: UiPart[];
 }
 
-export function AssistantTurn({ text, traceMessages, sources, tokenUsage, isStreaming }: AssistantTurnProps) {
+export function AssistantTurn({ text, traceMessages, sources, tokenUsage, isStreaming, uiParts }: AssistantTurnProps) {
   const [activeSourceIndex, setActiveSourceIndex] = useState<number | null>(null);
   const [selected, setSelected] = useState<{ source: VectorSearchHit; index: number } | null>(null);
 
@@ -86,6 +89,14 @@ export function AssistantTurn({ text, traceMessages, sources, tokenUsage, isStre
             />
           ))}
         </HorizontalScrollRow>
+      )}
+
+      {!isStreaming && uiParts && uiParts.length > 0 && (
+        <div className={styles.uiParts}>
+          {uiParts.map((part, i) => (
+            <UiPartRenderer key={i} part={part} />
+          ))}
+        </div>
       )}
 
       {!isStreaming && text && (
