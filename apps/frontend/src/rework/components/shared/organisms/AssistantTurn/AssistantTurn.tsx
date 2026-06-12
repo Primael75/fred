@@ -14,6 +14,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ChatMessage, LinkPart, VectorSearchHit } from "../../../../../slices/agentic/agenticOpenApi";
+import type { UiPart } from "@rework/types/thread";
+import { UiPartRenderer } from "@shared/molecules/UiPartRenderer/UiPartRenderer";
 import { ThoughtTrace } from "@shared/molecules/ThoughtTrace/ThoughtTrace";
 import { AssistantMessage } from "@shared/molecules/AssistantMessage/AssistantMessage";
 import { ArtifactLinks } from "@shared/molecules/ArtifactLinks/ArtifactLinks";
@@ -34,9 +36,18 @@ interface AssistantTurnProps {
   links: LinkPart[];
   tokenUsage?: TokenUsage | null;
   isStreaming: boolean;
+  uiParts?: UiPart[];
 }
 
-export function AssistantTurn({ text, traceMessages, sources, links, tokenUsage, isStreaming }: AssistantTurnProps) {
+export function AssistantTurn({
+  text,
+  traceMessages,
+  sources,
+  links,
+  tokenUsage,
+  isStreaming,
+  uiParts,
+}: AssistantTurnProps) {
   const [activeSourceIndex, setActiveSourceIndex] = useState<number | null>(null);
   const [selected, setSelected] = useState<{ source: VectorSearchHit; index: number } | null>(null);
 
@@ -60,7 +71,12 @@ export function AssistantTurn({ text, traceMessages, sources, links, tokenUsage,
     [copyAction],
   );
 
-  const hasContent = traceMessages.length > 0 || text.length > 0 || links.length > 0 || isStreaming;
+  const hasContent =
+    traceMessages.length > 0 ||
+    text.length > 0 ||
+    links.length > 0 ||
+    (uiParts?.length ?? 0) > 0 ||
+    isStreaming;
   if (!hasContent) return null;
 
   return (
@@ -91,6 +107,14 @@ export function AssistantTurn({ text, traceMessages, sources, links, tokenUsage,
       )}
 
       {!isStreaming && links.length > 0 && <ArtifactLinks links={links} />}
+
+      {!isStreaming && uiParts && uiParts.length > 0 && (
+        <div className={styles.uiParts}>
+          {uiParts.map((part, i) => (
+            <UiPartRenderer key={i} part={part} />
+          ))}
+        </div>
+      )}
 
       {!isStreaming && text && (
         <div className={styles.footer}>

@@ -33,7 +33,7 @@ export default defineConfig({
       "/control-plane": process.env.VITE_BACKEND_URL_CONTROL_PLANE || "http://localhost:8222",
       "/evaluation": process.env.VITE_BACKEND_URL_EVALUATION || "http://localhost:8336",
       "/samples": process.env.VITE_BACKEND_URL_SAMPLES || "http://localhost:8010",
-      "/synthia": process.env.VITE_BACKEND_URL_SYNTHIA|| "http://localhost:8020",
+      "/synthia": process.env.VITE_BACKEND_URL_SYNTHIA || "http://localhost:8020",
     },
   },
   resolve: {

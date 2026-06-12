@@ -33,7 +33,7 @@ import {
   usePostTeamSessionControlPlaneV1TeamsTeamIdSessionsPostMutation,
 } from "../../../../slices/controlPlane/controlPlaneOpenApi";
 import { isTraceChannel, linksOf, textOf } from "../../../../rework/utils/traceUtils";
-import type { ThreadMessage } from "@rework/types/thread";
+import type { ThreadMessage, UiPart } from "@rework/types/thread";
 import type { TokenUsage } from "@rework/types/conversation";
 import { useSessionHistory } from "./useSessionHistory";
 import { useChatAttachments } from "./useChatAttachments";
@@ -132,6 +132,12 @@ function toThreadMessages(messages: ChatMessage[], isStreaming: boolean): Thread
         if (tokenUsage && sources.length > 0) break;
       }
       const links: LinkPart[] = finalMessages.flatMap((m) => linksOf(m));
+
+      // "link" parts are rendered via ArtifactLinks (links, above); excluded here to avoid double rendering.
+      const uiParts = finalMessages
+        .flatMap((m) => (m.parts as unknown as Array<{ type?: string }>) ?? [])
+        .filter((p) => p.type === "geo" || p.type === "component") as unknown as UiPart[];
+
       result.push({
         id: `${eid}:assistant`,
         role: "assistant",
@@ -141,6 +147,7 @@ function toThreadMessages(messages: ChatMessage[], isStreaming: boolean): Thread
         sources,
         links,
         tokenUsage,
+        uiParts: uiParts.length > 0 ? uiParts : undefined,
       });
     }
   }
