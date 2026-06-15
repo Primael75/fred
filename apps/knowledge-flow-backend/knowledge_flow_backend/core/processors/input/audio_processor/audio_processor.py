@@ -34,10 +34,6 @@ class AudioProcessor(BaseMarkdownProcessor):
     def _get_audio_config(self) -> dict:
         try:
             from knowledge_flow_backend.application_context import get_configuration
-<<<<<<< HEAD
-
-=======
->>>>>>> ce0e305ce (refactor: move AudioVideoProcessor to audio_processor as Fred-native processor)
             cfg = get_configuration()
             extras = getattr(cfg, "model_extra", None) or {}
             return extras.get("audio_model", {}) or {}
@@ -47,10 +43,6 @@ class AudioProcessor(BaseMarkdownProcessor):
     def _get_model(self):
         if self._model is None:
             from faster_whisper import WhisperModel
-<<<<<<< HEAD
-
-=======
->>>>>>> ce0e305ce (refactor: move AudioVideoProcessor to audio_processor as Fred-native processor)
             audio_cfg = self._get_audio_config()
             model_size = audio_cfg.get("whisper_model_size", "base")
             device = audio_cfg.get("device", "cpu")
@@ -66,20 +58,12 @@ class AudioProcessor(BaseMarkdownProcessor):
 
     def extract_file_metadata(self, file_path: Path) -> dict:
         import av
-<<<<<<< HEAD
-
-=======
->>>>>>> ce0e305ce (refactor: move AudioVideoProcessor to audio_processor as Fred-native processor)
         duration = None
         try:
             with av.open(str(file_path)) as container:
                 duration = float(container.duration) / 1_000_000 if container.duration else None
         except Exception:
-<<<<<<< HEAD
-            logger.debug("Could not read duration from %s", file_path, exc_info=True)  # nosec B110
-=======
             pass
->>>>>>> ce0e305ce (refactor: move AudioVideoProcessor to audio_processor as Fred-native processor)
         # duration_seconds n'est pas dans la whitelist de _apply_enrichment → passer via extras
         return {
             "file_size_bytes": file_path.stat().st_size,
@@ -110,9 +94,6 @@ class AudioProcessor(BaseMarkdownProcessor):
                 ts = self._format_timestamp(seg.start)
                 lines.append(f"[{ts}] {seg.text.strip()}")
 
-<<<<<<< HEAD
-            content = f"# Transcript — {file_path.name}\n\n**Langue détectée :** {language}  \n**Durée :** {duration:.1f}s\n\n## Contenu\n\n" + "\n".join(lines) + "\n"
-=======
             content = (
                 f"# Transcript — {file_path.name}\n\n"
                 f"**Langue détectée :** {language}  \n"
@@ -121,7 +102,6 @@ class AudioProcessor(BaseMarkdownProcessor):
                 + "\n".join(lines)
                 + "\n"
             )
->>>>>>> ce0e305ce (refactor: move AudioVideoProcessor to audio_processor as Fred-native processor)
             md_path = output_dir / "output.md"
             md_path.write_text(content, encoding="utf-8")
             return {"doc_dir": str(output_dir), "md_file": str(md_path)}
@@ -130,18 +110,10 @@ class AudioProcessor(BaseMarkdownProcessor):
                 try:
                     audio_path.unlink()
                 except Exception:
-<<<<<<< HEAD
-                    logger.debug("Could not delete temp file %s", audio_path, exc_info=True)  # nosec B110
-
-    def _extract_audio_from_video(self, video_path: Path) -> Path:
-        import av
-
-=======
                     pass
 
     def _extract_audio_from_video(self, video_path: Path) -> Path:
         import av
->>>>>>> ce0e305ce (refactor: move AudioVideoProcessor to audio_processor as Fred-native processor)
         tmp = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
         tmp.close()
         out_path = Path(tmp.name)
