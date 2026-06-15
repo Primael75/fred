@@ -55,6 +55,7 @@ Last updated: 2026-06-15
 | `OPS-01` | `DEVOPS-HELM-CHART` | Simon | A lancer — prerequis CI + Docker clos | [BACKLOG §3b.11](backlog/BACKLOG.md) | [FRED-CHART-MODERNIZATION-RFC](rfc/FRED-CHART-MODERNIZATION-RFC.md) | GitHub issue `#1685` |
 | `DEVOPS-FREDLAB` | `DEVOPS-FREDLAB` | Sébastien | **⚠️ CRITIQUE — chart Helm clos, lancer le déploiement interne GKE Autopilot** | [BACKLOG §3b](backlog/BACKLOG.md) | — | `TBD` |
 | `OPS-05` | `DEVOPS-STORAGE-NAMING` | Simon | A lancer — RFC/backlog prets | [BACKLOG §OPS-05](backlog/BACKLOG.md) | [OBJECT-STORAGE-NAMING-RFC](rfc/OBJECT-STORAGE-NAMING-RFC.md) | `TBD` |
+| `RUNTIME-07` | `COMPONENT-PART` | Primael | Ready to start — RFC written | [CHAT-UI-BACKLOG §4](backlog/CHAT-UI-BACKLOG.md) | [RFC-001-COMPONENT-PART](rfc/RFC-001-COMPONENT-PART.md) | `TBD` |
 
 ## Execution Refs Already Known
 

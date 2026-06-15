@@ -789,6 +789,14 @@ items:
       Layer 2b: correct handling of native Claude thinking blocks in
       react_stream_adapter (suppress from assistant delta, emit as THOUGHT_* events).
 
+  - id: RUNTIME-07
+    title: "ComponentPart — extend UiPart union"
+    status: open
+    owner: Primael
+    refs:
+      rfc: "docs/swift/rfc/RFC-001-COMPONENT-PART.md"
+      backlog: "docs/swift/backlog/CHAT-UI-BACKLOG.md §4"
+
   # ── UX ────────────────────────────────────────────────────────────────
 
   - id: UX-01

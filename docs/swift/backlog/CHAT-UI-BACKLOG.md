@@ -807,6 +807,11 @@ reintroduced from the legacy `frontend/src/components/chatbot` tree.
 - [ ] Thumbs feedback per message
 - [ ] PDF viewer integration
 
+- [ ] **RUNTIME-07** — Add `ComponentPart` to the `UiPart` union (Python SDK + frontend).
+  Includes fix for existing bug: `GeoPart` and `LinkPart` are silently dropped by
+  `toThreadMessages()` and never reach `AssistantTurn`.
+  RFC: [`RFC-001-COMPONENT-PART.md`](../rfc/RFC-001-COMPONENT-PART.md)
+
 ---
 
 ## 5 Phase CHAT-05 — Design System Enrichment & Enterprise UX Refonte

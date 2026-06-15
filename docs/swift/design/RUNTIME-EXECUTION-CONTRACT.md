@@ -800,6 +800,7 @@ contract first. Do not patch the generated TypeScript by hand.
 
 ---
 
+<<<<<<< HEAD
 ## 13. Evaluation Execution Surface — EVAL-01 (June 2026)
 
 ### Frozen surface
@@ -829,3 +830,12 @@ No DeepEval, LiteLLM, or OpenTelemetry dependency is permitted in `fred-runtime`
 ### RFC reference
 
 `docs/swift/rfc/AGENT-EVALUATION-RFC.md` — EVAL-01 v2
+=======
+## 13. Frozen Contract Change Log
+
+Dated entries for every change to frozen contracts (`execution.py`, `agent_app.py`, OpenAPI surface, `UiPart` union).
+
+| Date | ID | Change | Justification |
+| ---- | -- | ------ | ------------- |
+| 2026-06-12 | RUNTIME-07 | Added `ComponentPart` to `UiPart` union in `fred_sdk/contracts/context.py` | Backwards-compatible extension via `type` discriminant; existing clients silently ignore unknown members |
+>>>>>>> 37c4b7461 (feat(RUNTIME-07): add ComponentPart to UiPart union)
