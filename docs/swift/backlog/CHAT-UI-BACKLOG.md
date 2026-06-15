@@ -889,6 +889,10 @@ The target authoring model is:
 - [ ] Keep the happy path no-LLM and deterministic
 - [ ] Use the official PPTX MIME type:
       `application/vnd.openxmlformats-officedocument.presentationml.presentation`
+- [ ] **CHAT-16** — Add `ComponentPart` to the `UiPart` union (Python SDK + frontend).
+  Includes fix for existing bug: `GeoPart` and `LinkPart` are silently dropped by
+  `toThreadMessages()` and never reach `AssistantTurn`.
+  RFC: [`RFC-001-COMPONENT-PART.md`](../rfc/RFC-001-COMPONENT-PART.md)
 
 ---
 

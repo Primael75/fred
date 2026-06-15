@@ -79,6 +79,7 @@ Last updated: 2026-07-06
 | `OPS-04` | `TASK-EVENT-STREAM` | Dimitri | In progress - local memory scheduler fix to unblock pending ingestion tasks. | [BACKLOG §OPS-04](backlog/BACKLOG.md) | [TASK-EVENT-STREAM-RFC](rfc/TASK-EVENT-STREAM-RFC.md) | Waived GitHub issue for local session |
 | `DEVOPS-FREDLAB` | `DEVOPS-FREDLAB` | Sébastien | **CRITICAL - Helm chart closed, launch internal GKE Autopilot deployment.** | [BACKLOG §3b](backlog/BACKLOG.md) | - | `TBD` |
 | `OPS-05` | `DEVOPS-STORAGE-NAMING` | Simon | Not started - RFC/backlog ready. | [BACKLOG §OPS-05](backlog/BACKLOG.md) | [OBJECT-STORAGE-NAMING-RFC](rfc/OBJECT-STORAGE-NAMING-RFC.md) | `TBD` |
+| `CHAT-16` | `COMPONENT-PART` | Primael | Ready to start - RFC written. | [CHAT-UI-BACKLOG §4](backlog/CHAT-UI-BACKLOG.md) | [RFC-001-COMPONENT-PART](rfc/RFC-001-COMPONENT-PART.md) | `TBD` |
 
 ## Execution Refs Already Known
 

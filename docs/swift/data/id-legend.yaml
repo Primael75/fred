@@ -428,6 +428,20 @@ items:
       Implemented 2026-06-29; offline suites green (cp 175 / agents 33 / frontend 276),
       all code-quality green. Awaiting review.
 
+  - id: CHAT-16
+    title: "ComponentPart — extend UiPart union"
+    status: open
+    owner: Primael
+    refs:
+      rfc: "docs/swift/rfc/RFC-001-COMPONENT-PART.md"
+      backlog: "docs/swift/backlog/CHAT-UI-BACKLOG.md §4"
+    notes: >
+      Adds ComponentPart to the UiPart union (Python SDK + frontend). Also fixes an
+      existing bug where GeoPart and LinkPart are silently dropped by
+      toThreadMessages() and never reach AssistantTurn. Ticket previously
+      self-labelled RUNTIME-07 in error before registration; corrected to CHAT-16
+      (RUNTIME-07 already registered to the runtime authz hardening track).
+
   # ── CTRLP ─────────────────────────────────────────────────────────────
 
   - id: CTRLP-01

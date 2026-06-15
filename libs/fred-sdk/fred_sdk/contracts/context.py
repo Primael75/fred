@@ -96,6 +96,24 @@ class GeoPart(BaseModel):
     # e.g. {"weight":2,"opacity":0.8,"fillOpacity":0.1}
 
 
+class ComponentPart(BaseModel):
+    """
+    Instructs the Fred frontend to mount a registered React component
+    directly in the chat, inline with the assistant response.
+
+    Why this exists:
+      - Agents that produce rich artifacts (editors, viewers, dashboards)
+        need a way to surface interactive UIs without leaving the chat.
+      - component_id is the lookup key in the frontend COMPONENT_REGISTRY.
+      - props carries the data the component needs (IDs, URLs, config).
+    """
+
+    type: Literal["component"] = "component"
+    component_id: str
+    props: Dict[str, Any] = {}
+    title: Optional[str] = None
+
+
 class RuntimeContext(BaseModel):
     """
     Runtime-scoped context passed with a request.
@@ -245,7 +263,7 @@ class ToolContentBlock(FrozenModel):
     data: dict[str, object] | None = None
 
 
-UiPart = Annotated[LinkPart | GeoPart, Field(discriminator="type")]
+UiPart = Annotated[LinkPart | GeoPart | ComponentPart, Field(discriminator="type")]
 
 
 class ToolInvocationResult(FrozenModel):

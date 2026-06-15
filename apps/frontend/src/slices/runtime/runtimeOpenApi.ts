@@ -438,6 +438,14 @@ export type VectorSearchHit = {
   vector_index?: string | null;
   viewer_fragment?: string | null;
 };
+export type ComponentPart = {
+  component_id: string;
+  props?: {
+    [key: string]: any;
+  };
+  title?: string | null;
+  type?: "component";
+};
 export type GeoPart = {
   fit_bounds?: boolean;
   geojson: {
@@ -472,6 +480,9 @@ export type FinalRuntimeEvent = {
     [key: string]: number;
   } | null;
   ui_parts?: (
+    | ({
+        type: "component";
+      } & ComponentPart)
     | ({
         type: "geo";
       } & GeoPart)
@@ -532,6 +543,9 @@ export type ToolResultRuntimeEvent = {
   sources?: VectorSearchHit[];
   tool_name?: string | null;
   ui_parts?: (
+    | ({
+        type: "component";
+      } & ComponentPart)
     | ({
         type: "geo";
       } & GeoPart)
