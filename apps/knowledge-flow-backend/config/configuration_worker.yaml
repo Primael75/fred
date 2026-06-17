@@ -85,6 +85,28 @@ processing:
           class_path: knowledge_flow_backend.core.processors.input.image_processor.image_processor.ImageProcessor
         - suffix: ".jsonl"
           class_path: knowledge_flow_backend.core.processors.input.jsonl.jsonl_markdown_processor.JsonlMarkdownProcessor
+        - suffix: ".mp3"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".wav"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".ogg"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".flac"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".m4a"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".aac"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".mp4"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".mkv"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".avi"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".mov"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".webm"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
     medium:
       use_gpu: false
       generate_summary: false
@@ -140,6 +162,28 @@ processing:
           class_path: knowledge_flow_backend.core.processors.input.image_processor.image_processor.ImageProcessor
         - suffix: ".jsonl"
           class_path: knowledge_flow_backend.core.processors.input.jsonl.jsonl_markdown_processor.JsonlMarkdownProcessor
+        - suffix: ".mp3"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".wav"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".ogg"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".flac"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".m4a"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".aac"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".mp4"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".mkv"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".avi"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".mov"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".webm"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
     rich:
       use_gpu: false
       generate_summary: false
@@ -195,6 +239,28 @@ processing:
           class_path: knowledge_flow_backend.core.processors.input.image_processor.image_processor.ImageProcessor
         - suffix: ".jsonl"
           class_path: knowledge_flow_backend.core.processors.input.jsonl.jsonl_markdown_processor.JsonlMarkdownProcessor
+        - suffix: ".mp3"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".wav"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".ogg"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".flac"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".m4a"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".aac"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".mp4"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".mkv"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".avi"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".mov"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
+        - suffix: ".webm"
+          class_path: knowledge_flow_backend.core.processors.input.audio_processor.audio_processor.AudioProcessor
 # attachment_processors:
 #   - suffix: ".pdf"
 #     class_path: knowledge_flow_backend.core.processors.input.fast_text_processor.fast_lite_pdf_processor.FastLitePdfProcessor
