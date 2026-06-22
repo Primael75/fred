@@ -1066,10 +1066,7 @@ No DeepEval, LiteLLM, or OpenTelemetry dependency is permitted in `fred-runtime`
 ### RFC reference
 
 `docs/swift/rfc/AGENT-EVALUATION-RFC.md` — EVAL-01 v2
-<<<<<<< HEAD
 
-=======
->>>>>>> 32a5f7f0d (fix: resolve leftover merge conflict markers from d84111d99)
 ## 14. Frozen Contract Change Log
 
 Dated entries for every change to frozen contracts (`execution.py`, `agent_app.py`, OpenAPI surface, `UiPart` union).
