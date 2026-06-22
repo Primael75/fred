@@ -278,7 +278,7 @@ security:
 
 scheduler:
   enabled: true
-  backend: "memory"
+  backend: "temporal"
   temporal:
     host: "localhost:7233"
     namespace: "default"
@@ -345,6 +345,10 @@ crossencoder_model:
 storage:
   postgres:
     sqlite_path: "~/.fred/knowledge-flow/knowledge-flow.db"
+    host: localhost
+    port: 5432
+    database: fred
+    username: fred
   opensearch:
     host: https://localhost:9200
     secure: true
