@@ -74,6 +74,7 @@ export function ConversationThread({
             links={msg.links}
             tokenUsage={msg.tokenUsage}
             isStreaming={msg.isStreaming}
+            uiParts={msg.uiParts}
           />
         );
       })}
