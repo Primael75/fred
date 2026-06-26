@@ -15,9 +15,11 @@
 import type { ComponentType } from "react";
 import type { ComponentPart } from "../../../../../slices/runtime/runtimeOpenApi";
 import { PrestonEditorBlock } from "./PrestonEditorBlock";
+import { QuizBlock } from "./QuizBlock";
 
 const COMPONENT_REGISTRY: Record<string, ComponentType<Record<string, any>>> = {
   "presenton-editor": PrestonEditorBlock,
+  "synthia-quiz": QuizBlock,
 };
 
 export function ComponentBlock({ part }: { part: ComponentPart }) {

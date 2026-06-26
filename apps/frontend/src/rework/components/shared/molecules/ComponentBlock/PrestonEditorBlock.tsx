@@ -21,7 +21,7 @@ export function PrestonEditorBlock({ presentation_id, base_url = "http://localho
   return (
     <iframe
       src={`${base_url}/presentation?id=${presentation_id}`}
-      style={{ width: "100%", height: "600px", border: "none" }}
+      style={{ width: "100%", height: "calc(100vh - 60px)", border: "none", display: "block" }}
       title={`Presenton editor — ${presentation_id}`}
     />
   );
