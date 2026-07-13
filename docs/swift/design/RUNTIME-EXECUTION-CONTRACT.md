@@ -447,10 +447,14 @@ use (e.g. a dedicated push channel).
 
 Carried in `tool_result` and `final` events:
 
-| Type   | Model      | Fields                                       |
-| ------ | ---------- | -------------------------------------------- |
-| `link` | `LinkPart` | `href`, `title`, `kind` (download/open/cite) |
-| `geo`  | `GeoPart`  | `geojson` (GeoJSON FeatureCollection)        |
+| Type        | Model           | Fields                                       |
+| ----------- | --------------- | -------------------------------------------- |
+| `link`      | `LinkPart`      | `href`, `title`, `kind` (download/open/cite) |
+| `geo`       | `GeoPart`       | `geojson` (GeoJSON FeatureCollection)        |
+| `component` | `ComponentPart` | `component_id`, `props`, `title` — mounts a registered React component inline in chat |
+
+`LinkPart`/`GeoPart`/`ComponentPart` and the `UiPart` alias live in `fred_core.ui_parts`
+(RUNTIME-10) and are re-imported by `fred_sdk/contracts/context.py` — not defined there anymore.
 
 **Representation rule:** agent prose, code fences, math, and Mermaid stay in
 plain markdown text and are rendered by the UI. `ui_parts` is reserved for
@@ -469,8 +473,9 @@ removed or no longer exported in the fresh Swift target. Agents and graph nodes 
 the authenticated Knowledge Flow MCP filesystem through SDK `ctx.fs` / `context.fs`
 helpers or direct MCP tools. Generated files are written to filesystem paths and
 returned to chat as safe Fred/Knowledge Flow `LinkPart` download references. The
-`LinkPart` / `ui_parts` SSE contract is unchanged; runtime history must persist those
-parts so live streaming and replay match. See `docs/swift/design/FILESYSTEM.md`.
+`LinkPart` / `ui_parts` SSE contract is unchanged; runtime history persists those
+parts (RUNTIME-10) so live streaming and replay match. See
+`docs/swift/design/FILESYSTEM.md`.
 
 ---
 
@@ -1074,3 +1079,4 @@ Dated entries for every change to frozen contracts (`execution.py`, `agent_app.p
 | Date | ID | Change | Justification |
 | ---- | -- | ------ | ------------- |
 | 2026-06-12 | RUNTIME-07 | Added `ComponentPart` to `UiPart` union in `fred_sdk/contracts/context.py` | Backwards-compatible extension via `type` discriminant; existing clients silently ignore unknown members |
+| 2026-07-13 | RUNTIME-10 | Moved `LinkPart`/`GeoPart`/`ComponentPart`/`UiPart` from `fred_sdk/contracts/context.py` to new `fred_core.ui_parts`; extended `fred_core.history_schema.MessagePart` to include them; added `ui_parts` param to `make_assistant_final`; `agent_app.py._write_turn_history` now reads `payload["ui_parts"]` on the `"final"` event | Fixes `ui_parts` silently dropped between live SSE and history reload (`CHAT-UI-BACKLOG.md §4.5.D`). `MessagePart` extension is additive via `type` discriminant; `make_assistant_final(ui_parts=None)` default keeps existing callers unchanged. `fred_sdk/contracts/context.py` re-imports the same types — no behavioural change for SDK consumers |

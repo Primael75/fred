@@ -55,6 +55,7 @@ import httpx
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from fred_core.common import personal_team_id
 from fred_core.common.config_loader import get_config
 from fred_core.history.history_schema import ChatMessage
 from fred_core.kpi import KPIMiddleware
@@ -1335,6 +1336,13 @@ async def _authorize_and_resolve(
                 "access_token_expires_at": None,  # nosec B105
             }
         )
+    elif request.runtime_context is None or not request.runtime_context.user_id:
+        # No-security dev mode has no JWT to stamp identity from (_dep_noop).
+        # Authored tools that read RuntimeContext.user_id (e.g. ctx.write()'s
+        # workspace filesystem) still need a stable per-user path segment —
+        # same dev fallback identity as _validate_resolved_team's team check.
+        base_ctx = request.runtime_context or RuntimeContext()
+        request.runtime_context = base_ctx.model_copy(update={"user_id": "admin"})
     await _validate_session_checkpoint_access(request)
     await _enforce_session_ownership(request, authenticated_user, container)
     await _authorize_execution_or_raise(request, authenticated_user, container)
@@ -1346,7 +1354,7 @@ async def _authorize_and_resolve(
         control_plane_url=get_runtime_context().config.control_plane_url,
         team_id=request.effective_team_id(),
     )
-    _validate_resolved_team(request, target.team_id, container)
+    _validate_resolved_team(request, target.team_id, container, authenticated_user)
     return internal_req, target
 
 
@@ -1354,6 +1362,7 @@ def _validate_resolved_team(
     request: RuntimeExecuteRequest,
     resolved_team_id: str | None,
     container: PodApplicationContext,
+    authenticated_user: KeycloakUser | None,
 ) -> None:
     """
     Cross-check the resolved instance owner team against the caller's claim.
@@ -1361,10 +1370,24 @@ def _validate_resolved_team(
     Team-scoped resolution already restricts the lookup to the caller's team, so a
     mismatch should be impossible; this is defense-in-depth and an audit anchor.
     Skipped for direct template execution (no team scope).
+
+    The bare "personal" alias (some frontend routes fall back to it before the
+    team bootstrap query resolves) is treated as equivalent to the caller's own
+    canonical personal team id — same tolerance control-plane already applies in
+    teams/system.py's get_system_team. In no-security mode this pod has no
+    authenticated_user (see _make_user_dependency's _dep_noop) even though
+    control-plane's own no-auth mock (fred_core.security.oidc) always resolves
+    to uid "admin" — mirror that fixed identity here so the comparison lines up
+    with what control-plane actually resolved the instance owner to.
     """
     if resolved_team_id is None:
         return
     claimed = request.effective_team_id()
+    if claimed == "personal":
+        resolving_uid = (
+            authenticated_user.uid if authenticated_user is not None else "admin"
+        )
+        claimed = personal_team_id(resolving_uid)
     if claimed is not None and claimed != resolved_team_id:
         _emit_audit_event(
             container,
@@ -1524,6 +1547,12 @@ async def _write_turn_history(
         make_user_text,
     )
     from fred_core.store.vector_search import VectorSearchHit
+    from fred_core.ui_parts import UiPart
+    from pydantic import TypeAdapter
+
+    # RUNTIME-10: same TypeAdapter-over-discriminated-union pattern already used
+    # by postgres_history_store._MESSAGE_PARTS_ADAPTER to (de)serialize MessagePart.
+    ui_parts_adapter: TypeAdapter[list[UiPart]] = TypeAdapter(list[UiPart])
 
     try:
         base_rank: int = await history_store.next_rank(session_id)
@@ -1562,6 +1591,7 @@ async def _write_turn_history(
     final_token_usage: ChatTokenUsage | None = None
     final_model: str | None = None
     final_finish_reason: str | None = None
+    final_ui_parts: list[UiPart] = []
 
     for payload in payloads:
         kind = payload.get("kind")
@@ -1649,6 +1679,15 @@ async def _write_turn_history(
                 )
             final_model = payload.get("model_name")
             final_finish_reason = payload.get("finish_reason")
+            raw_ui_parts = payload.get("ui_parts") or []
+            if raw_ui_parts:
+                try:
+                    final_ui_parts = ui_parts_adapter.validate_python(raw_ui_parts)
+                except Exception:
+                    logger.exception(
+                        "[fred-runtime][history] Failed to parse ui_parts session_id=%s",
+                        session_id,
+                    )
 
     # 3. Terminal assistant message (from FinalRuntimeEvent)
     if final_content or final_model:
@@ -1662,6 +1701,7 @@ async def _write_turn_history(
                 usage=final_token_usage,
                 sources=final_sources if final_sources else None,
                 finish_reason=final_finish_reason,
+                ui_parts=final_ui_parts if final_ui_parts else None,
             )
         )
 

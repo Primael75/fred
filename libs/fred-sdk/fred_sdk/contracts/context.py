@@ -39,79 +39,19 @@ Example:
 from __future__ import annotations
 
 from enum import Enum
-from typing import Annotated, Any, Dict, Literal, Optional
+from typing import Annotated, Any, Literal, Optional
 
 from fred_core.store import VectorSearchHit
+from fred_core.ui_parts import ComponentPart, GeoPart, LinkKind, LinkPart
 from pydantic import BaseModel, ConfigDict, Field
 
-# NOTE: This module is the canonical home for portable context + UI parts.
-# Keep Link/Geo parts and RuntimeContext here to avoid circular imports.
-
-
-class LinkKind(str, Enum):
-    citation = "citation"  # source supporting the answer
-    download = "download"  # file to fetch (pdf, csv, etc.)
-    external = "external"  # generic external link
-    dashboard = "dashboard"  # e.g., Grafana, Kibana
-    related = "related"  # further reading
-    view = "view"  # for pdf preview
-
-
-class LinkPart(BaseModel):
-    """
-    Why this exists:
-      - The UI needs a typed, explicit way to render links without parsing free text.
-      - Lets agents express intent (citation/download/etc.) so the UI can group + style.
-    """
-
-    type: Literal["link"] = "link"
-    href: Optional[str] = None  # absolute URL
-    title: Optional[str] = None  # human label; fallback to href if None
-    kind: LinkKind = LinkKind.external
-    rel: Optional[str] = None  # e.g. "noopener", "noreferrer", "ugc"
-    mime: Optional[str] = None  # e.g. "application/pdf"
-    source_id: Optional[str] = None
-    # ^ if this link corresponds to a VectorSearchHit (metadata.sources),
-    #   set source_id = hit.id so the UI can cross-highlight.
-    document_uid: Optional[str] = None
-    file_name: Optional[str] = None
-
-
-class GeoPart(BaseModel):
-    """
-    Why this exists:
-      - Maps shouldn't be 'imagined' from text. We carry real data (GeoJSON FeatureCollection)
-        so the UI can render it with Leaflet immediately.
-      - Optional presentation hints keep style logic minimal in the UI.
-    """
-
-    type: Literal["geo"] = "geo"
-    # Strict GeoJSON to avoid format proliferation; agents must normalize before emitting.
-    # Expecting: {"type":"FeatureCollection","features":[...]}
-    geojson: Dict[str, Any]
-    # Optional UI hints; the UI should treat all as best-effort:
-    popup_property: Optional[str] = None  # property to show in popups if present
-    fit_bounds: bool = True  # auto-fit map to the features
-    style: Optional[Dict[str, Any]] = None
-    # e.g. {"weight":2,"opacity":0.8,"fillOpacity":0.1}
-
-
-class ComponentPart(BaseModel):
-    """
-    Instructs the Fred frontend to mount a registered React component
-    directly in the chat, inline with the assistant response.
-
-    Why this exists:
-      - Agents that produce rich artifacts (editors, viewers, dashboards)
-        need a way to surface interactive UIs without leaving the chat.
-      - component_id is the lookup key in the frontend COMPONENT_REGISTRY.
-      - props carries the data the component needs (IDs, URLs, config).
-    """
-
-    type: Literal["component"] = "component"
-    component_id: str
-    props: Dict[str, Any] = {}
-    title: Optional[str] = None
+# NOTE (RUNTIME-10): LinkPart/GeoPart/ComponentPart used to be defined here and
+# nowhere else, which is why fred-core's history schema could never include
+# them without a circular fred-core -> fred-sdk dependency. They now live in
+# fred_core.ui_parts (fred-sdk already depends on fred-core, so re-importing
+# them here is a normal downstream import, not a cycle) and are persisted
+# as-is through ChatMessage.parts. RuntimeContext stays here — it is
+# fred-sdk/runtime-specific and fred-core has no need for it.
 
 
 class RuntimeContext(BaseModel):

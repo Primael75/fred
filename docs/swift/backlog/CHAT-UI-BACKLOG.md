@@ -876,10 +876,12 @@ The target authoring model is:
 
 - [ ] Render `LinkPart(kind="download")` entries in `AssistantTurn` with a small
       `DownloadLinkBadge`
-- [ ] Preserve `ui_parts` in runtime history so live SSE and `messages_url_template`
-      replay show the same download links
+- [x] **RUNTIME-10** — Preserve `ui_parts` in runtime history so live SSE and
+      `messages_url_template` replay show the same download links.
+      RFC: [`RUNTIME-10-PERSIST-UI-PARTS-RFC.md`](../rfc/RUNTIME-10-PERSIST-UI-PARTS-RFC.md)
 - [ ] Add frontend tests for live/history-loaded download link rendering
-- [ ] Add runtime tests proving `ui_parts` are persisted and returned in session history
+- [x] **RUNTIME-10** — Add runtime tests proving `ui_parts` are persisted and
+      returned in session history
 
 #### 4.5.E Minimal slide-template validation agent
 

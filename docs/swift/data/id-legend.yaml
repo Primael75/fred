@@ -1330,6 +1330,25 @@ items:
       (no backfill of existing instances). Peer of CTRLP-08 (agent_instructions
       runtime injection).
 
+  - id: RUNTIME-10
+    title: "Persist ui_parts (LinkPart, GeoPart, ComponentPart) in session history"
+    status: open
+    owner: Primael
+    refs:
+      rfc: "docs/swift/rfc/RUNTIME-10-PERSIST-UI-PARTS-RFC.md"
+      backlog: "docs/swift/backlog/CHAT-UI-BACKLOG.md §4.5.D"
+    notes: >
+      Fixes ui_parts (LinkPart/GeoPart/ComponentPart) silently dropped between live
+      SSE and history reload: fred_core.history_schema.MessagePart never included
+      UI part types, make_assistant_final() had no ui_parts parameter, and
+      _write_turn_history() never read payload["ui_parts"] on the "final" event.
+      Moves LinkPart/GeoPart/ComponentPart from fred_sdk/contracts/context.py to a
+      new fred_core.ui_parts module (fred-sdk already depends on fred-core; the
+      reverse direction would cycle) — same pattern already used for
+      VectorSearchHit. Frontend (useManagedChat.ts) already reads these types from
+      m.parts; no frontend change needed. Related to CHAT-16 / RFC-001-COMPONENT-PART
+      (SDK+frontend union extension) but distinct scope — persistence only.
+
   # ── UX ────────────────────────────────────────────────────────────────
 
   - id: UX-01

@@ -51,6 +51,7 @@ from fred_core.history.history_schema import (
     make_user_text,
 )
 from fred_core.history.postgres_history_store import PostgresHistoryStore
+from fred_core.ui_parts import ComponentPart, GeoPart, LinkPart, UiPart
 
 __all__ = [
     "BaseHistoryStore",
@@ -59,7 +60,10 @@ __all__ = [
     "ChatMetadata",
     "ChatTokenUsage",
     "CodePart",
+    "ComponentPart",
+    "GeoPart",
     "ImageUrlPart",
+    "LinkPart",
     "MessagePart",
     "NoOpHistoryStore",
     "PostgresHistoryStore",
@@ -68,6 +72,7 @@ __all__ = [
     "TextPart",
     "ToolCallPart",
     "ToolResultPart",
+    "UiPart",
     "make_assistant_final",
     "make_tool_call",
     "make_tool_result",

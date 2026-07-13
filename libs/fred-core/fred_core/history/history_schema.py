@@ -39,11 +39,16 @@ Example:
         parts=[TextPart(text="Hello")],
     )
 
-Note on MessagePart coverage:
+Note on MessagePart coverage (RUNTIME-10):
 - this module defines the core structural parts (text, code, image, tool_call,
-  tool_result) that are sufficient for pod-agent history storage
-- ``agentic-backend`` extends the part union with UI-specific types (LinkPart,
-  GeoPart) in its own ``chat_schema`` module
+  tool_result) plus the UI-rendering parts (link, geo, component) from
+  ``fred_core.ui_parts``, so a ``ChatMessage`` round-trips through the history
+  store with everything the live SSE ``final`` event carried
+- ``LinkPart``/``GeoPart``/``ComponentPart`` live in ``fred_core.ui_parts`` (not
+  here) because ``fred-sdk`` also needs them for its own contracts
+  (``ToolInvocationResult.ui_parts``); defining them in ``fred-core`` lets
+  ``fred-sdk`` import them back without a circular dependency, since
+  ``fred-sdk`` already depends on ``fred-core``
 """
 
 from __future__ import annotations
@@ -51,11 +56,22 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Annotated, Any, Dict, List, Literal, Optional, TypeAlias, Union
+from typing import (
+    Annotated,
+    Any,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Sequence,
+    TypeAlias,
+    Union,
+)
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from fred_core.store import VectorSearchHit
+from fred_core.ui_parts import ComponentPart, GeoPart, LinkPart, UiPart
 
 # ---------------------------------------------------------------------------
 # Enums
@@ -255,15 +271,18 @@ MessagePart: TypeAlias = Annotated[
         ToolResultPart,
         HitlRequestPart,
         HitlResponsePart,
+        LinkPart,
+        GeoPart,
+        ComponentPart,
     ],
     Field(discriminator="type"),
 ]
 """
-Discriminated union of all core message parts.
+Discriminated union of all message parts, structural and UI-rendering (RUNTIME-10).
 
-Note: ``agentic-backend`` extends this union with LinkPart and GeoPart in its
-own ``chat_schema`` module. The fred-core version covers all parts needed for
-pod-agent history storage.
+``LinkPart``/``GeoPart``/``ComponentPart`` are defined in ``fred_core.ui_parts``
+and re-exported here so a ``ChatMessage`` can carry the same ``ui_parts`` an
+agent returned live, through a full history-store round-trip.
 """
 
 
@@ -365,13 +384,20 @@ def make_assistant_final(
     usage: Optional[ChatTokenUsage] = None,
     sources: Optional[List[VectorSearchHit]] = None,
     finish_reason: Optional[str] = None,
+    ui_parts: Optional[Sequence[UiPart]] = None,
 ) -> ChatMessage:
     """
     Build the terminal assistant message for a turn.
 
     How to use it:
     - call after accumulating all assistant delta tokens into ``text``
+    - pass ``ui_parts`` (RUNTIME-10) straight from the runtime's ``final`` event
+      payload so links/maps/components survive a history reload, not just the
+      live SSE stream
     """
+    parts: List[MessagePart] = [TextPart(text=text)] if text else []
+    if ui_parts:
+        parts.extend(ui_parts)
     return ChatMessage(
         session_id=session_id,
         exchange_id=exchange_id,
@@ -379,7 +405,7 @@ def make_assistant_final(
         timestamp=datetime.now(timezone.utc),
         role=Role.assistant,
         channel=Channel.final,
-        parts=[TextPart(text=text)] if text else [],
+        parts=parts,
         metadata=ChatMetadata(
             model=model,
             token_usage=usage,

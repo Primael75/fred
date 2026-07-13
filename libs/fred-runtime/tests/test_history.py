@@ -177,6 +177,13 @@ def test_write_turn_history_maps_react_turn_to_chat_messages() -> None:
             "model_name": "gpt-4o",
             "token_usage": {"input_tokens": 10, "output_tokens": 5, "total_tokens": 15},
             "finish_reason": "stop",
+            "ui_parts": [
+                {
+                    "type": "link",
+                    "href": "https://example.com/report.pdf",
+                    "kind": "download",
+                }
+            ],
         },
     ]
 
@@ -219,6 +226,15 @@ def test_write_turn_history_maps_react_turn_to_chat_messages() -> None:
     assert messages[3].parts[0].text == "Done."
     assert messages[3].metadata.model == "gpt-4o"
     assert messages[3].rank == 3
+
+    # RUNTIME-10 — ui_parts from the "final" payload must survive the mapping
+    # into the persisted ChatMessage, not just the live SSE stream.
+    assert len(messages[3].parts) == 2, (
+        "expected text part + link part, ui_parts was dropped"
+    )
+    ui_part = messages[3].parts[1]
+    assert ui_part.type == "link"
+    assert ui_part.href == "https://example.com/report.pdf"
 
 
 def test_write_turn_history_skips_save_when_no_content() -> None:

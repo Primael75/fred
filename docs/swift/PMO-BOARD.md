@@ -24,7 +24,7 @@ Do not add new scope or statuses here that are absent from the source docs.
 - `Execution` column priority: GitHub issue -> PR -> working branch -> `TBD`.
 - When an execution ref is known, mirror it under the backlog item as `Execution: ...`.
 
-Last updated: 2026-07-06
+Last updated: 2026-07-13
 
 ## Active And Next Up
 
@@ -80,6 +80,7 @@ Last updated: 2026-07-06
 | `DEVOPS-FREDLAB` | `DEVOPS-FREDLAB` | Sébastien | **CRITICAL - Helm chart closed, launch internal GKE Autopilot deployment.** | [BACKLOG §3b](backlog/BACKLOG.md) | - | `TBD` |
 | `OPS-05` | `DEVOPS-STORAGE-NAMING` | Simon | Not started - RFC/backlog ready. | [BACKLOG §OPS-05](backlog/BACKLOG.md) | [OBJECT-STORAGE-NAMING-RFC](rfc/OBJECT-STORAGE-NAMING-RFC.md) | `TBD` |
 | `CHAT-16` | `COMPONENT-PART` | Primael | Ready to start - RFC written. | [CHAT-UI-BACKLOG §4](backlog/CHAT-UI-BACKLOG.md) | [RFC-001-COMPONENT-PART](rfc/RFC-001-COMPONENT-PART.md) | `TBD` |
+| `RUNTIME-10` | `PERSIST-UI-PARTS` | Primael | Implemented 2026-07-13 (awaiting review) - `LinkPart`/`GeoPart`/`ComponentPart` moved to new `fred_core.ui_parts` (avoids fred-core→fred-sdk cycle); `MessagePart` extended; `make_assistant_final` takes `ui_parts`; `_write_turn_history` reads `payload["ui_parts"]` on `"final"`. No frontend change needed (`useManagedChat.ts` already reads `m.parts`). Related to CHAT-16, distinct scope (persistence only). `make code-quality` green on fred-core/fred-sdk/fred-runtime (root run stopped at pre-existing unrelated `apps/fred-agents` failure — not caused by this change). Offline suites green: core 250, sdk 186 (incl. purity), runtime 408. | [CHAT-UI-BACKLOG §4.5.D](backlog/CHAT-UI-BACKLOG.md) | [RUNTIME-10-PERSIST-UI-PARTS-RFC](rfc/RUNTIME-10-PERSIST-UI-PARTS-RFC.md) | `TBD` |
 
 ## Execution Refs Already Known
 
