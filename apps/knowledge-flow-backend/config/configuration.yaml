@@ -349,11 +349,11 @@ storage:
     port: 5432
     database: fred
     username: fred
-  opensearch:
-    host: https://localhost:9200
-    secure: true
-    verify_certs: false
-    username: admin
+  # opensearch:  # not used in local dev — requires OPENSEARCH_PASSWORD
+  #   host: https://localhost:9200
+  #   secure: true
+  #   verify_certs: false
+  #   username: admin
   resource_store:
     type: "postgres"
   log_store:
@@ -390,7 +390,7 @@ mcp:
   text_enabled: true
   templates_enabled: true
   resources_enabled: true
-  opensearch_ops_enabled: true
+  opensearch_ops_enabled: false
   prometheus_ops_enabled: true
   neo4j_enabled: false
   filesystem_enabled: true
