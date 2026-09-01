@@ -74,6 +74,10 @@ export function QuizBlock({ questions, title }: QuizBlockProps) {
 
   // ── Écran final ──────────────────────────────────────────────────────────
   if (finished) {
+    const wrongQuestions = questions
+      .map((q, i) => ({ q, i, userAnswer: userAnswers[i] }))
+      .filter(({ q, userAnswer }) => userAnswer !== q.correct_answer);
+
     return (
       <div style={container}>
         {title && (
@@ -84,6 +88,8 @@ export function QuizBlock({ questions, title }: QuizBlockProps) {
         <p style={{ margin: "0 0 16px", fontWeight: 600, fontSize: "1rem" }}>
           Score final : {score} / {total}
         </p>
+
+        {/* Récapitulatif rapide */}
         <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "20px" }}>
           {questions.map((q, i) => {
             const correct = userAnswers[i] === q.correct_answer;
@@ -110,6 +116,47 @@ export function QuizBlock({ questions, title }: QuizBlockProps) {
             );
           })}
         </div>
+
+        {/* Points à revoir */}
+        {wrongQuestions.length > 0 && (
+          <div style={{ marginBottom: "20px" }}>
+            <p style={{ margin: "0 0 10px", fontWeight: 600, fontSize: "0.875rem", color: "var(--on-surface)" }}>
+              Points à revoir ({wrongQuestions.length})
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {wrongQuestions.map(({ q, i }) => (
+                <div
+                  key={i}
+                  style={{
+                    padding: "12px 14px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--outline-variant)",
+                    backgroundColor: "var(--surface-container-high)",
+                    fontSize: "0.8125rem",
+                    lineHeight: "1.55",
+                  }}
+                >
+                  <p style={{ margin: "0 0 6px", fontWeight: 600, color: "var(--on-surface)" }}>
+                    Q{i + 1}. {q.question}
+                  </p>
+                  <p style={{ margin: "0 0 4px", color: "var(--on-surface)" }}>
+                    <span style={{ fontWeight: 500 }}>Bonne réponse : </span>
+                    {q.correct_answer}. {q.choices[q.correct_answer as keyof typeof q.choices]}
+                  </p>
+                  <p style={{ margin: "0 0 4px", color: "var(--on-surface-retreat)" }}>
+                    {q.explanation}
+                  </p>
+                  {q.source_reference && (
+                    <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--on-surface-muted)", fontStyle: "italic" }}>
+                      {q.source_reference}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <button
           onClick={handleRestart}
           style={{
