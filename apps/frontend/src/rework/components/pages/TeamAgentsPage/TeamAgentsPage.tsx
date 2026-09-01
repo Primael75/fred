@@ -22,6 +22,7 @@ import { useToast } from "@shared/molecules/Toast/ToastProvider";
 import { useFrontendBootstrap } from "../../../../hooks/useFrontendBootstrap.ts";
 import { useFrontendProperties } from "../../../../hooks/useFrontendProperties.ts";
 import { useGetTeamQuery } from "../../../../slices/controlPlane/controlPlaneApiEnhancements";
+import { isPersonalTeamId } from "@shared/utils/teamId.ts";
 import { type AgentFormPayload, default as AgentFormModal } from "./AgentFormModal/AgentFormModal.tsx";
 import TeamAgentEmptyState from "./TeamAgentEmptyState/TeamAgentEmptyState.tsx";
 import ServiceNotice from "@shared/molecules/ServiceNotice/ServiceNotice.tsx";
@@ -74,7 +75,7 @@ export default function TeamAgentsPage() {
   const { activeTeam } = useFrontendBootstrap();
   const { agentsNicknamePlural, agentsNicknameSingular } = useFrontendProperties();
 
-  const isPersonalTeam = teamId === activeTeam?.id;
+  const isPersonalTeam = isPersonalTeamId(teamId) || teamId === activeTeam?.id;
   const [isEnrollOpen, setIsEnrollOpen] = useState(false);
   const [editingInstance, setEditingInstance] = useState<ManagedAgentInstanceSummary | null>(null);
 

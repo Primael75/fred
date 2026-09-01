@@ -15,6 +15,7 @@
 import { type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFrontendBootstrap } from "../../../../../hooks/useFrontendBootstrap";
+import { isPersonalTeamId } from "@shared/utils/teamId.ts";
 import { buildTree, type TagNode } from "../../../../../shared/utils/tagTree";
 import type { DocumentMetadata } from "../../../../../slices/knowledgeFlow/knowledgeFlowOpenApi";
 import {
@@ -71,7 +72,7 @@ export function DocumentLibraryScopePicker({
 }: DocumentLibraryScopePickerProps) {
   const { t } = useTranslation();
   const { activeTeam } = useFrontendBootstrap();
-  const isPersonalTeam = !teamId || teamId === activeTeam?.id;
+  const isPersonalTeam = !teamId || isPersonalTeamId(teamId) || teamId === activeTeam?.id;
   const [expanded, setExpanded] = useState<string[]>([]);
   const [documentsByTagId, setDocumentsByTagId] = useState<Record<string, DocumentMetadata[]>>({});
   const [loadingTagIds, setLoadingTagIds] = useState<Record<string, boolean>>({});

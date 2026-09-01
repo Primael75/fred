@@ -31,6 +31,7 @@ import IconButton from "@shared/atoms/IconButton/IconButton";
 import { useManagedChat } from "./useManagedChat";
 import { useFrontendBootstrap } from "../../../../hooks/useFrontendBootstrap";
 import { useGetTeamQuery } from "../../../../slices/controlPlane/controlPlaneApiEnhancements";
+import { isPersonalTeamId } from "@shared/utils/teamId.ts";
 import { useToast } from "@shared/molecules/Toast/ToastProvider";
 import { KeyCloakService } from "../../../../security/KeycloakService";
 import { useTranscribeAudioKnowledgeFlowV1AudioTranscriptionsPostMutation } from "../../../../slices/knowledgeFlow/knowledgeFlowOpenApi";
@@ -90,7 +91,7 @@ export default function ManagedChatPage() {
   );
 
   const { activeTeam } = useFrontendBootstrap();
-  const isPersonalTeam = teamId === activeTeam?.id;
+  const isPersonalTeam = isPersonalTeamId(teamId) || teamId === activeTeam?.id;
   const { data: fetchedTeam } = useGetTeamQuery({ teamId }, { skip: !teamId || isPersonalTeam });
   const team = isPersonalTeam ? activeTeam : fetchedTeam;
   const isAdmin =
