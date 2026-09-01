@@ -173,6 +173,29 @@ class TaskStore:
             result = await s.execute(q)
             return list(result.scalars().all())
 
+    async def cancel_orphaned_tasks(self) -> int:
+        """Cancel all non-terminal tasks that have no executor binding.
+
+        Called once at startup: after a server restart, tasks stuck in pending/running
+        with execution_id IS NULL can never progress — no worker holds them.
+        Returns the number of rows cancelled.
+        """
+        from sqlalchemy import update
+
+        terminal = [
+            TaskState.succeeded.value,
+            TaskState.failed.value,
+            TaskState.cancelled.value,
+        ]
+        async with use_session(self._sessions) as s:
+            result = await s.execute(
+                update(TaskRunRow)
+                .where(TaskRunRow.state.notin_(terminal))
+                .where(TaskRunRow.execution_id.is_(None))
+                .values(state=TaskState.cancelled.value, updated_at=_utcnow())
+            )
+            return result.rowcount
+
     async def replay_events(
         self,
         task_id: str,

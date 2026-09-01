@@ -116,6 +116,9 @@ def create_app() -> FastAPI:
 
     @contextlib.asynccontextmanager
     async def lifespan(app: FastAPI):
+        cancelled = await container.get_task_service().store.cancel_orphaned_tasks()
+        if cancelled:
+            logger.info("[MAIN] Cancelled %d orphaned task(s) from previous run.", cancelled)
         try:
             yield
         finally:

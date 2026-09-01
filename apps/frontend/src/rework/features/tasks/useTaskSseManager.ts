@@ -15,7 +15,7 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { KeyCloakService } from "../../../security/KeycloakService";
-import { selectActiveTasks, taskEventReceived } from "./taskSlice";
+import { selectActiveTasks, taskEventReceived, taskEvicted } from "./taskSlice";
 import { TERMINAL_STATES, type AnyTaskEvent } from "./taskTypes";
 
 // Task events are served by the backend that runs the task: ingestion/reindex
@@ -59,6 +59,7 @@ export function parseSseBlock(block: string): { id?: string; event?: AnyTaskEven
 
 const BASE_BACKOFF_MS = 1_000;
 const MAX_BACKOFF_MS = 30_000;
+const MAX_CONSECUTIVE_FAILURES = 5;
 
 export function useTaskSseManager(): void {
   const dispatch = useDispatch();
@@ -111,6 +112,7 @@ async function openStream(
 ): Promise<void> {
   let lastEventId: string | undefined = initialLastEventId;
   let backoffMs = BASE_BACKOFF_MS;
+  let consecutiveFailures = 0;
 
   while (!signal.aborted) {
     let retriable = true;
@@ -161,6 +163,7 @@ async function openStream(
 
               dispatch(taskEventReceived(event));
               backoffMs = BASE_BACKOFF_MS; // successful event — reset backoff
+              consecutiveFailures = 0;
 
               if (TERMINAL_STATES.has(event.state)) {
                 // Terminal: stop streaming. Succeeded tasks are kept in the store
@@ -181,6 +184,15 @@ async function openStream(
     }
 
     if (!retriable || signal.aborted) return;
+
+    consecutiveFailures++;
+    if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+      console.warn(
+        `[useTaskSseManager] task ${taskId}: evicting after ${consecutiveFailures} consecutive failures`,
+      );
+      dispatch(taskEvicted(taskId));
+      return;
+    }
 
     await abortableDelay(backoffMs, signal);
     backoffMs = Math.min(backoffMs * 2, MAX_BACKOFF_MS);
