@@ -31,6 +31,7 @@ const customIcons = ["customAgent"] as const;
 
 export type MaterialIconType =
   | "add"
+  | "remove"
   | "home"
   | "people"
   | "groups"
@@ -103,7 +104,14 @@ export type MaterialIconType =
   | "expand_less"
   | "expand_more"
   | "fullscreen"
-  | "fullscreen_exit";
+  | "fullscreen_exit"
+  | "target"
+  | "checklist"
+  | "menu_book"
+  | "rocket_launch"
+  | "code"
+  | "account_tree"
+  | "circle";
 
 export type CustomIconType = (typeof customIcons)[number];
 export type IconType = MaterialIconType | CustomIconType;

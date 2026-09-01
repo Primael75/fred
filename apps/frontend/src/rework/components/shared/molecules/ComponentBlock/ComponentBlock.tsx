@@ -16,10 +16,18 @@ import type { ComponentType } from "react";
 import type { ComponentPart } from "../../../../../slices/runtime/runtimeOpenApi";
 import { PrestonEditorBlock } from "./PrestonEditorBlock";
 import { QuizBlock } from "./QuizBlock";
+import { MindmapForceGraphBlock } from "../MindmapForceGraphBlock/MindmapForceGraphBlock";
+import { MindmapFlowBlock } from "../MindmapFlowBlock/MindmapFlowBlock";
+import { MindmapPreziBlock } from "../MindmapPreziBlock/MindmapPreziBlock";
+import { MindmapZumlyBlock } from "../MindmapZumlyBlock/MindmapZumlyBlock";
 
 const COMPONENT_REGISTRY: Record<string, ComponentType<Record<string, any>>> = {
   "presenton-editor": PrestonEditorBlock,
   "synthia-quiz": QuizBlock,
+  "synthia-mindmap": MindmapForceGraphBlock,
+  "synthia-mindmap-flow": MindmapFlowBlock,
+  "synthia-mindmap-prezi": MindmapPreziBlock,
+  "synthia-mindmap-zumly": MindmapZumlyBlock,
 };
 
 export function ComponentBlock({ part }: { part: ComponentPart }) {
