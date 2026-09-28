@@ -33,6 +33,8 @@ COPY scripts /workspace/scripts
 COPY libs/fred-pod /workspace/libs/fred-pod
 COPY libs/fred-core /workspace/libs/fred-core
 
+ENV UV_HTTP_TIMEOUT=300 
+
 # Install dependencies using make
 RUN make dev VENV=/app/venv TARGET=/app/target
 RUN python /workspace/scripts/patch_docling_rapidocr_openvino.py
