@@ -387,6 +387,20 @@
       "downloadFailed": "Could not download {{name}}",
       "fallbackName": "Download"
     },
+    "commandTurn": {
+      "open": "Open the prompt behind the /{{command}} command",
+      "openWithText": "Open the prompt behind the /{{command}} command, followed by “{{appended}}”",
+      "panelTitle": "Command prompt"
+    },
+    "commandMenu": {
+      "ariaLabel": "Available commands",
+      "promptsSection": "Prompt library",
+      "noneInTeam": "No command in this team yet. An editor can give one to a prompt from the Prompts page.",
+      "noMatch": "No command matches.",
+      "runErrorSummary": "Could not run the command",
+      "runErrorDetail": "The prompt behind this command could not be read. Please try again in a moment."
+    },
+    "composerPlaceholder": "Ask your question, or type / for a command",
     "uiParts": {
       "ariaLabel": "Agent cards",
       "geoAria": "Map data",
@@ -1688,6 +1702,7 @@
           "searchPlaceholder": "Search a team",
           "clearSearch": "Clear search",
           "noTeams": "No team matches.",
+          "noEditableTeams": "You are not an editor of any team. Only an editor can copy a prompt into one — ask a team administrator for that role.",
           "successToast": "Prompt copied ({{count}})",
           "errorToast": "Copy failed ({{count}})",
           "originTeam": "Origin team"
@@ -2200,8 +2215,8 @@
         "subtitle": "Proves the live API honors the authorization model: platform-admin flags match real endpoint access, and nobody — not even a platform admin — gets implicit access to a team they don't belong to.",
         "runSelf": "Run for myself",
         "expiry": {
-          "title": "Credential renewal self-test",
-          "run": "Run credential expiry",
+          "title": "Agent access after your session expires",
+          "run": "Run session-expiry check",
           "warning": {
             "title": "Keep this page open until the check finishes",
             "message": "This check waits for your current sign-in credential to expire, so it runs for about {{minutes}} minutes. Keep this page open until it ends. If you close the tab or reload before it finishes, the run leaves one temporary agent behind, to delete from your personal agents.",
@@ -2756,6 +2771,9 @@
         "emptySearch": "No prompts match this search.",
         "firstCreate": "Create prompt",
         "form": {
+          "command": "Command",
+          "commandConflict": "This command label is already used by another team prompt",
+          "commandHelp": "Launch shortcuts in the chat",
           "description": "Description",
           "name": "Name",
           "text": "Prompt text"

@@ -104,7 +104,13 @@ export default function HomeSearch() {
         const detail = await fetchPromptDetail({ promptId: hit.id }).unwrap();
         setPromptDialog({
           mode: "marketplace",
-          detail: { id: detail.id, name: detail.name, description: detail.description, text: detail.text },
+          detail: {
+            id: detail.id,
+            name: detail.name,
+            description: detail.description,
+            text: detail.text,
+            command: detail.command,
+          },
           chipLabel: hit.teamName ?? null,
         });
       } catch {
@@ -156,7 +162,7 @@ export default function HomeSearch() {
   const rowVisual = (hit: SearchHit) => {
     if (hit.kind === "team") {
       return hit.avatarImageUrl ? (
-        <img className={styles.rowAvatar} src={hit.avatarImageUrl} alt="" />
+        <img className={styles.rowAvatar} src={hit.avatarImageUrl} alt="" width={32} height={32} decoding="async" />
       ) : (
         <TeamInitials className={styles.rowAvatar} name={hit.name} size="small" shape="square" />
       );

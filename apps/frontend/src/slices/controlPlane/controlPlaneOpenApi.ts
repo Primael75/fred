@@ -370,6 +370,12 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg.createPromptRequest,
       }),
     }),
+    getTeamPromptCommandsControlPlaneV1TeamsTeamIdPromptCommandsGet: build.query<
+      GetTeamPromptCommandsControlPlaneV1TeamsTeamIdPromptCommandsGetApiResponse,
+      GetTeamPromptCommandsControlPlaneV1TeamsTeamIdPromptCommandsGetApiArg
+    >({
+      query: (queryArg) => ({ url: `/control-plane/v1/teams/${queryArg.teamId}/prompt-commands` }),
+    }),
     getContextPromptsEarlyControlPlaneV1TeamsTeamIdPromptsContextGet: build.query<
       GetContextPromptsEarlyControlPlaneV1TeamsTeamIdPromptsContextGetApiResponse,
       GetContextPromptsEarlyControlPlaneV1TeamsTeamIdPromptsContextGetApiArg
@@ -1755,6 +1761,11 @@ export type PostTeamPromptControlPlaneV1TeamsTeamIdPromptsPostApiArg = {
   teamId: string;
   createPromptRequest: CreatePromptRequest;
 };
+export type GetTeamPromptCommandsControlPlaneV1TeamsTeamIdPromptCommandsGetApiResponse =
+  /** status 200 Successful Response */ PromptCommandSummary[];
+export type GetTeamPromptCommandsControlPlaneV1TeamsTeamIdPromptCommandsGetApiArg = {
+  teamId: string;
+};
 export type GetContextPromptsEarlyControlPlaneV1TeamsTeamIdPromptsContextGetApiResponse =
   /** status 200 Successful Response */ ContextPromptSummary[];
 export type GetContextPromptsEarlyControlPlaneV1TeamsTeamIdPromptsContextGetApiArg = {
@@ -2835,6 +2846,7 @@ export type FrontendBootstrap = {
   active_team: TeamWithPermissions;
   available_teams?: Team[];
   gcu_version?: string | null;
+  team_admin_charter_enabled: boolean;
   feature_flags: FrontendFeatureFlags;
   permissions: PermissionSummary;
   /** Deployer-configured banner for upload surfaces (document upload drawer, chat attachments), from `platform.frontend.upload_warning` (MIGR-01.01). `None` when the deployment configures none — the frontend then renders nothing. Deliberately on the authenticated bootstrap, not the pre-auth `FrontendConfig`: upload surfaces only render post-auth, and `FrontendConfig` stays minimal. */
@@ -3151,6 +3163,7 @@ export type BodyPatchTeamAgentInstanceWithAssetsControlPlaneV1TeamsTeamIdAgentIn
 export type PromptSummary = {
   id: string;
   name: string;
+  command?: string | null;
   description?: string | null;
   category_id?: string | null;
   emoji?: string | null;
@@ -3174,6 +3187,15 @@ export type CreatePromptRequest = {
   emoji?: string | null;
   tags?: string[];
   text: string;
+  /** Optional slug identifying this prompt for invocation from the chat composer. Lowercase ASCII letters, digits, '-' and '_'. Unique per team. Empty or whitespace-only input is stored as no command. */
+  command?: string | null;
+};
+export type PromptCommandSummary = {
+  prompt_id: string;
+  command: string;
+  name: string;
+  description?: string | null;
+  emoji?: string | null;
 };
 export type ContextPromptSummary = {
   id: string;
@@ -3188,6 +3210,7 @@ export type ContextPromptSummary = {
 export type PromptDetail = {
   id: string;
   name: string;
+  command?: string | null;
   description?: string | null;
   category_id?: string | null;
   emoji?: string | null;
@@ -3213,6 +3236,8 @@ export type UpdatePromptRequest = {
   emoji?: string | null;
   tags?: string[];
   text: string;
+  /** Optional slug identifying this prompt for invocation from the chat composer. Lowercase ASCII letters, digits, '-' and '_'. Unique per team. Empty or whitespace-only input is stored as no command. */
+  command?: string | null;
 };
 export type PromptScoreUpdateRequest = {
   score: number;
@@ -3223,6 +3248,7 @@ export type PromptPromoteRequest = {
 export type MarketplacePromptSummary = {
   id: string;
   name: string;
+  command?: string | null;
   description?: string | null;
   category_id?: string | null;
   emoji?: string | null;
@@ -3244,6 +3270,7 @@ export type MarketplacePromptSummary = {
 export type MarketplacePromptDetail = {
   id: string;
   name: string;
+  command?: string | null;
   description?: string | null;
   category_id?: string | null;
   emoji?: string | null;
@@ -4300,6 +4327,8 @@ export const {
   useGetTeamPromptsControlPlaneV1TeamsTeamIdPromptsGetQuery,
   useLazyGetTeamPromptsControlPlaneV1TeamsTeamIdPromptsGetQuery,
   usePostTeamPromptControlPlaneV1TeamsTeamIdPromptsPostMutation,
+  useGetTeamPromptCommandsControlPlaneV1TeamsTeamIdPromptCommandsGetQuery,
+  useLazyGetTeamPromptCommandsControlPlaneV1TeamsTeamIdPromptCommandsGetQuery,
   useGetContextPromptsEarlyControlPlaneV1TeamsTeamIdPromptsContextGetQuery,
   useLazyGetContextPromptsEarlyControlPlaneV1TeamsTeamIdPromptsContextGetQuery,
   useGetTeamPromptControlPlaneV1TeamsTeamIdPromptsPromptIdGetQuery,

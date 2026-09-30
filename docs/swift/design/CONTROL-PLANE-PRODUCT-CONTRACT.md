@@ -127,6 +127,8 @@ Phase 3a uses one control-plane-owned bootstrap payload:
       the personal/system space and for any team the caller is not a member of.
   - `gcu_version`
     - optional Terms of Use / CGU gating switch exposed by deployment config
+  - `team_admin_charter_enabled`
+    - whether `app.team_admin_charter_version` is configured; see §54
   - `feature_flags`
   - `permissions`
   - `upload_warning`
@@ -3235,7 +3237,10 @@ OpenFGA timeout is between 1 ms and 30 seconds. The control plane remains the
 store and authorization-model owner. The async factory also initializes
 fred-core's process-local user JWT verifier from `security.user`, requires the
 backend's process-level KPI writer, creates one private OpenFGA engine, and
-resolves the configured store before startup completes. A backend reuses that
+resolves the configured store before startup completes. With a delegation switch
+on, it installs that engine for the account status check of each request
+authenticated through fred-core's user dependency; without it, or while OpenFGA
+cannot answer, those requests return 503 `account_status_unavailable`. A backend reuses that
 facade for requests and awaits `close()` during shutdown (or uses its async
 context manager); it never constructs a client per request.
 
@@ -3982,7 +3987,9 @@ the theme archive like `gcu.md`; the stock file is a template.
 
 **Configuration.** `app.team_admin_charter_version: str | None`. `None`, the
 default, turns the charter off. Changing the value asks every admin to accept
-again (see Reconciliation).
+again (see Reconciliation). Authenticated `FrontendBootstrap.team_admin_charter_enabled`
+is true exactly when the version is not `None`; it is derived from this setting,
+not configured separately.
 
 **Model.** `schema.fga` adds `team.pending_team_admin: [user]`, part of the
 `team_member` union and of nothing else. A pending admin is a member with no
@@ -4034,9 +4041,13 @@ an error stops the startup.
 check count `team_admin` only, so a team whose nominated admin never accepts can
 still be rescued.
 
-**Frontend.** On the pages of a team where `my_relations` holds
-`pending_team_admin`, the charter page replaces the team content until Accept
-while the team has no `team_admin`. Once the team has one, the pages stay
+**Frontend.** When `team_admin_charter_enabled` is false or bootstrap has
+not loaded, the charter page and notice stay hidden, as does the Responsibilities
+entry in team settings. A direct Responsibilities URL redirects to Members once
+bootstrap has loaded and reported the charter disabled. When enabled, on the
+pages of a team where `my_relations` holds `pending_team_admin`, the charter
+page replaces the team content until Accept while the team has no `team_admin`.
+Once the team has one, the pages stay
 available to the user's other roles under a notice leading to the charter. The
 home page, the personal space and other teams stay usable. Team settings show
 the Responsibilities section to `team_admin`s, with the time they accepted it,
@@ -4112,6 +4123,45 @@ banner they do not render on the GCU-acceptance and root-bootstrap screens.
 **Not in this slice.** Scheduling (start/end dates) — the planned follow-up; the
 model does not preclude it. No per-team or per-role targeting.
 
+## 56. Contract Notes — prompt commands (2026-09-28, PROMPT-CMD-01)
+
+**What it is.** A prompt may carry an optional `command`: a lowercase unaccented
+slug (`^[a-z0-9_-]+$`, ≤ 64 characters) that runs it from the chat composer by
+typing `/` plus that slug. Full design: `PROMPTS.md` §3.2.
+
+**Payload changes, all additive.** `PromptSummary` and `PromptDetail` gain
+`command: str | None`; `CreatePromptRequest` and `UpdatePromptRequest` accept it,
+with blank or whitespace-only input stored as no command. Uniqueness is per
+team, guaranteed by a partial unique index rather than an application check.
+
+**New endpoint — `GET /control-plane/v1/teams/{team_id}/prompt-commands`**,
+`CAN_USE_TEAM_AGENTS`, returning `list[PromptCommandSummary]`
+(`prompt_id`, `command`, `name`, `description?`, `emoji?`).
+
+Its own surface rather than a filter over the prompt listing, because that
+listing is **capped at 100 rows**: the composer resolves a typed command against
+every command the team holds, and a command past the cap would resolve to
+nothing — silently, since an unmatched token is sent to the agent as ordinary
+text. Carrying neither the prompt text nor its counters is what lets this one be
+uncapped.
+
+**Error shape — one new code.** A prompt write that collides on the command
+returns 409 with an **object** detail, `{"code": "prompt_command_conflict",
+"message": ...}`, so a form can mark the command field rather than the name.
+Every other prompt error keeps the plain-string detail. The two conflicts are
+told apart by asking the database which constraint fired, not by parsing the
+driver's message; a name collision wins when both apply.
+
+**Copy semantics.** `promote` copies the command and returns 409 on a collision,
+matching how it already treats the name. A marketplace import copies it and, on
+a collision in the destination team, appends the first free `-N` suffix from
+`-2` — again matching the name.
+
+**Execution.** `RuntimeContext` gains an optional `command` descriptor
+(`RUNTIME-EXECUTION-CONTRACT.md` §8.98) that the composer sets on a command
+turn; the turn's content is the prompt's text, and the runtime knows nothing
+about prompts.
+
 ## Knowledge Flow ingestion cancellation — 2026-09-23
 
 `POST /knowledge-flow/v1/tasks/{task_id}/cancel` retains its existing task-mutation
@@ -4124,7 +4174,7 @@ deferred. See [INGESTION.md](INGESTION.md).
 ## Workload identity and person authorization (2026-09-18)
 
 The control plane authenticates the workload and authorizes the asserted
-person's current standing, whitelist and resource permissions. Caller trust is
+person's current account status, whitelist and resource permissions. Caller trust is
 specified in runtime contract §8.90. Caller-only publication APIs retain their
 workload and ownership checks. Managed delegated runs resolve bindings through
 a read-only GET carrying the grant; direct runs need no binding request.
@@ -4141,22 +4191,32 @@ Asserted people carry no bearer roles.
 
 For delegated `prepare-execution`, the one-shot model override is authorized
 against the workload caller's delegation role. Otherwise it requires an ordinary
-service identity. Detailed cases are in the
-[subject and standing specification](../../../openspec/changes/add-delegated-agent-execution/specs/delegation-subject-and-standing/spec.md).
+service identity. Routes that present the caller's bearer to another service
+(agent-instance enrollment and update, with or without asset uploads, session,
+bulk session and attachment deletion, knowledge-base instance creation and
+deletion) refuse an asserted person with 403 `requires_own_credential`, and
+managed `prepare-execution` for that person returns no capability chat controls
+and presents no bearer to the agent pod
+([grant specification](../../../openspec/changes/add-delegated-agent-execution/specs/delegated-execution-grant/spec.md)).
+Detailed cases are in the
+[subject and account status specification](../../../openspec/changes/add-delegated-agent-execution/specs/delegation-subject-and-account-status/spec.md).
 
-## Deleting a person removes their standing first (2026-09-23)
+## Deleting a person suspends their account first (2026-09-23)
 
 User deletion retains administrator permission and protected-account checks,
 and rejects wildcard or userset identifiers. It resolves identity administration
 before mutation, then writes suspension before deleting the account whenever
-standing is enforced. Failed account deletion leaves suspension effective;
+account status is enforced. Failed account deletion leaves suspension effective;
 other authorization relations remain and retries are safe.
 
-Suspension applies at the next authorization decision, not to work already
-authorized. Direct identity-provider changes do not update platform standing.
-With standing disabled, deletion writes no suspension. Exact refusal and retry
+Suspension applies at the next request, before the route runs, not to work
+already authorized. That includes personal-team routes such as the runtime-binding
+lookup and execution preparation, which refuse a suspended subject with 403
+`account_suspended`, or 503 `account_status_unavailable` when account status cannot
+be read. Direct identity-provider changes do not update platform account status.
+With account status disabled, deletion writes no suspension. Exact refusal and retry
 scenarios are maintained in the
-[subject and standing specification](../../../openspec/changes/add-delegated-agent-execution/specs/delegation-subject-and-standing/spec.md).
+[subject and account status specification](../../../openspec/changes/add-delegated-agent-execution/specs/delegation-subject-and-account-status/spec.md).
 
 
 ## Knowledge Flow ingestion admission and relaunch — 2026-09-26

@@ -6233,7 +6233,7 @@ execution gate in §8.89. Exact claim, transport and refusal scenarios are in th
 `act_for_people` controls outgoing delegation; `accept_delegated_calls` controls
 incoming grants. Both default off. A runtime acting for people requires user
 authentication; a runtime accepting asserted people must also act for people.
-Either switch requires account-standing enforcement and startup readiness.
+Either switch requires account status enforcement and a compatible authorization model at startup.
 
 Service-role shortcuts always exclude caller-role holders, independently of the
 switches. Configuration defaults and rejection scenarios are maintained in the
@@ -6245,19 +6245,28 @@ ReAct and Deep parent/child frames may recover a tool call only at the completed
 assistant-message boundary, only for a Mistral-qualified response, and only when
 the reconstructed provider content contains the exact empty typed sentinel
 `{"type":"reference","reference_ids":[]}` between a registered tool name
-and strict JSON arguments. Prose before, between, or after valid calls remains
-assistant content; the calls execute. Non-empty citation references, extra
-reference fields, literal exporter placeholders, duplicate JSON keys, unknown
-tools, schema-invalid arguments and over-cap representations remain assistant
-text. The exact empty sentinel is distinct from ordinary cited-answer blocks,
-which carry reference IDs.
-Native tool calls, including duplicates, are preserved unchanged.
+and strict JSON arguments. The bounded content list may mix typed text blocks
+and plain string fragments; their original order and bytes are retained even
+when they split a tool name or JSON argument. A response may contain several
+exact sentinels when each follows a registered tool name and every resulting
+call validates. The whole candidate is rejected if a later marker or call is
+invalid. Prose before, between, or after valid calls remains assistant content;
+the calls execute. Non-empty citation references, extra reference fields,
+literal exporter placeholders, duplicate JSON keys, unknown tools,
+schema-invalid arguments and over-cap representations remain assistant text.
+The exact empty sentinel is distinct from ordinary cited-answer blocks, which
+carry reference IDs. Native tool calls, including duplicates and their IDs, are
+preserved unchanged.
 
 Recovery is bounded, validates every call before allocating call IDs, and marks
 the normalized message so the Mistral-gated streaming bridge withholds the typed
-marker and call syntax from assistant/reasoning SSE. Only the longest suffix
-that remains a prefix of a registered tool name is held while the marker is
-unresolved; ordinary and non-Mistral text is released unchanged. Each completed
+marker and call syntax from assistant/reasoning SSE for the same mixed content
+shape. If a completed message already carries native calls and marked content,
+the bridge discards pending encoded syntax instead of publishing it as a Planning
+preamble; safe prose emitted before the tool-name probe is retained. Only
+the longest suffix that remains a prefix of a registered tool name is held
+while the marker is unresolved; ordinary, unrecognized-block,
+and non-Mistral text is released unchanged. Each completed
 representation is normalized at most once and then follows the normal tool
 route: existing limits run before HITL proposals, approved calls execute through
 tool observability, and every call keeps normal `ToolMessage` pairing. Recovery
@@ -6278,7 +6287,7 @@ ownership guarantees.
 ### 8.94 Workload identity and person authorization (2026-09-18)
 
 Receivers authenticate workload bearers and authorize the person named by the
-plain `person`, `run`, `agent` grant using current standing and permissions.
+plain `person`, `run`, `agent` grant using current account status and permissions.
 Caller trust follows §8.90. Runtime history, checkpoints, diagnostics, capability
 configuration and OpenAI-compatible admission require the directly authenticated
 identity. Native execute, evaluate and stream admissions accept delegated people.
@@ -6290,8 +6299,10 @@ maintains the endpoint policy inventory and deferred Graph-agent work.
 
 With outgoing delegation enabled, a caller-role holder must name a person to
 admit a run. Asserted people carry no bearer roles and receive no service-role
-shortcuts. Managed execution requires current standing and `CAN_USE_TEAM_AGENTS`
-on the requested team; direct execution checks standing and any supplied team.
+shortcuts. Account status is the request's own check, made once before admission;
+managed execution then requires `CAN_USE_TEAM_AGENTS` on the requested team, direct
+execution any supplied team, and a delegated run rechecks account status
+before every tool call in every team.
 
 Ordinary service identities without the caller role retain their existing
 execution gates and own-bearer calls, including tools configured as `delegated`.
@@ -6338,3 +6349,23 @@ requiring classified failures must use typed artifacts or propagated exceptions.
 Tool-name collision checks, authorization, audit and HITL are unchanged.
 Identity, services and typed capability options already use one assembly path;
 model middleware and MCP prompt injection remain specific to ReAct/Deep.
+
+
+### 8.98 Prompt command descriptor on a user turn (2026-09-28)
+
+`RuntimeContext` gains an optional `command` — the prompt command a turn was
+launched from, carrying the command string, the text the user appended after
+it, and the prompt's id and name. `ChatMetadata` gains the matching optional
+`command` on the stored turn. Both are optional and purely presentational: a
+turn's parts still hold the full assembled text, which is what replays to the
+model, and the agent never sees the descriptor. A client that omits it and a
+reader that ignores it both behave exactly as before, so an unaware transcript
+renders the turn as plain text.
+
+The descriptor reaches the turn through the existing `model_dump()` of
+`RuntimeContext` into the internal execute-request context, read by key where
+`session_id` already is. It is client-supplied and therefore untrusted: it
+selects a renderer and nothing more, and a malformed value is dropped rather
+than failing the turn. `prompt_id` is attribution, never resolved at display
+time — a prompt is overwritten on edit and can be deleted, so the turn's own
+text is the record of what was sent.

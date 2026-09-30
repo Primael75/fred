@@ -19,6 +19,7 @@ import SearchInput from "@shared/molecules/SearchInput/SearchInput.tsx";
 import { Dialog } from "@shared/molecules/Dialog/Dialog.tsx";
 import { useToast } from "@shared/molecules/Toast/ToastProvider";
 import { isPersonalTeamId } from "@shared/utils/teamId.ts";
+import { canEditTeamContent } from "@hooks/teamCapabilities";
 import { useFrontendBootstrap } from "../../../../../../hooks/useFrontendBootstrap";
 import { usePostMarketplacePromptImportControlPlaneV1MarketplacePromptsPromptIdImportPostMutation } from "../../../../../../slices/controlPlane/controlPlaneOpenApi";
 import styles from "./ImportPromptDialog.module.scss";
@@ -31,8 +32,6 @@ interface ImportPromptDialogProps {
   originTeamId?: string | null;
   onClose: () => void;
 }
-
-const EDITOR_RELATIONS = new Set(["team_editor", "team_admin"]);
 
 /** Multi-select target picker for importing a marketplace prompt into the
  * caller's own spaces: the personal space plus every team the caller can edit.
@@ -60,12 +59,7 @@ export default function ImportPromptDialog({
   // offered separately at the top).
   const editableTeams = useMemo(
     () =>
-      availableTeams.filter(
-        (team) =>
-          !isPersonalTeamId(team.id) &&
-          team.id !== personalId &&
-          (team.my_relations ?? []).some((relation) => EDITOR_RELATIONS.has(relation)),
-      ),
+      availableTeams.filter((team) => !isPersonalTeamId(team.id) && team.id !== personalId && canEditTeamContent(team)),
     [availableTeams, personalId],
   );
 
@@ -135,7 +129,7 @@ export default function ImportPromptDialog({
           <span className={styles.rowLabel}>{t("rework.marketplace.prompts.import.personalSpace")}</span>
         </label>
 
-        {editableTeams.length > 0 && (
+        {editableTeams.length > 0 ? (
           <>
             <div className={styles.searchBar}>
               <SearchInput
@@ -151,7 +145,14 @@ export default function ImportPromptDialog({
                 const isOrigin = team.id === originTeamId;
                 return (
                   <label key={team.id} className={styles.row} data-disabled={isOrigin || undefined}>
-                    <Checkbox checked={selected.has(team.id)} disabled={isOrigin} onChange={() => toggle(team.id)} />
+                    {/* Checked because the team already holds the prompt — an empty
+                        disabled box states the opposite. It is never added to
+                        `selected`, so it is never submitted as a target. */}
+                    <Checkbox
+                      checked={isOrigin || selected.has(team.id)}
+                      disabled={isOrigin}
+                      onChange={() => toggle(team.id)}
+                    />
                     <span className={styles.rowLabel}>{team.name}</span>
                     {isOrigin && (
                       <span className={styles.originTag}>{t("rework.marketplace.prompts.import.originTeam")}</span>
@@ -164,6 +165,11 @@ export default function ImportPromptDialog({
               )}
             </div>
           </>
+        ) : (
+          // Editing a team's prompts needs `team_editor`; holding only
+          // `team_admin` leaves this list empty, so say why rather than
+          // showing the personal space alone with no explanation.
+          <p className={styles.empty}>{t("rework.marketplace.prompts.import.noEditableTeams")}</p>
         )}
       </div>
     </Dialog>

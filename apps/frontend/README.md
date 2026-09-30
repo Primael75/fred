@@ -275,8 +275,7 @@ rotate. Grant read on that one prefix and `FRONTEND_THEME_URL` is the whole
 configuration. A presigned URL works the same way, until it expires.
 
 When the store insists on authentication, add the two key variables and point
-them at a Secret the deployment already has rather than minting one for the
-theme:
+them at a Secret the deployment already has:
 
 ```yaml
 - name: FRONTEND_THEME_S3_ACCESS_KEY
@@ -287,12 +286,18 @@ theme:
     secretKeyRef: { name: fred-secrets, key: S3_SECRET_KEY, optional: true }
 ```
 
+The Fred chart also creates `s3-credentials` from the control-plane content
+storage keys when `applications.frontend.extraEnvVars` configures
+`FRONTEND_THEME_URL`. You can reference its `MINIO_ACCESS_KEY` and
+`MINIO_SECRET_KEY` keys instead of the example Secret above. It is absent when
+the URL is unset or an empty literal, the frontend is disabled, or either key is missing.
+
 `optional: true` matters: without it a missing Secret leaves the pod unschedulable,
 which is a hard failure for what is only branding. With it the fetch degrades to
 anonymous and the baked assets are served.
 
-`deploy/local/k3d/values-local.yaml` carries this shape against the k3d
-seaweedfs, reusing the stack chart's own `fred-secrets`.
+fred-deployment-factory's k3d values (`k3d-apps/fred/values.yaml`) carry this shape
+against the k3d seaweedfs, reusing the stack chart's own `fred-secrets`.
 `make theme-bundle` packages `theme/` into `theme.zip`, ready to upload. That
 directory is a complete working example - round logo and its dark variant, an
 agent icon silhouette, a team avatar, and the four legal files - so the target
